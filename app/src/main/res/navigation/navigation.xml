@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/navigation"
+    app:startDestination="@id/heroListFragment">
+    <fragment
+        android:id="@+id/heroListFragment"
+        android:name="com.apska.mymarvelheroes.ui.screens.herolist.HeroListFragment"
+        android:label="HeroListFragment" >
+        <action
+            android:id="@+id/action_heroListFragment_to_heroDetailFragment"
+            app:destination="@id/heroDetailFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/heroDetailFragment"
+        android:name="com.apska.mymarvelheroes.ui.screens.herodetails.HeroDetailFragment"
+        android:label="HeroDetailFragment" >
+        <argument
+            android:name="selectedHero"
+            app:argType="com.apska.mymarvelheroes.data.model.Hero" />
+    </fragment>
+</navigation>
