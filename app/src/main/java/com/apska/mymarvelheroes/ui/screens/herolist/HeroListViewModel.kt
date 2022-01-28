@@ -1,18 +1,22 @@
 package com.apska.mymarvelheroes.ui.screens.herolist
 
+import android.app.Application
+import android.content.Context
+import android.net.*
+import android.os.Build
 import android.util.Log
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import com.apska.mymarvelheroes.BuildConfig
 import com.apska.mymarvelheroes.data.api.HeroApi
 import com.apska.mymarvelheroes.data.model.Hero
 import com.apska.mymarvelheroes.utils.Common.Companion.md5
+import com.apska.mymarvelheroes.utils.NetworkUtils.Companion.isNetworkAvailable
 import kotlinx.coroutines.*
 import java.util.*
-import kotlin.collections.ArrayList
 
-class HeroListViewModel(): ViewModel() {
+class HeroListViewModel(application: Application): AndroidViewModel(application) {
 
     private val TAG = this.javaClass.simpleName
 
@@ -33,14 +37,69 @@ class HeroListViewModel(): ViewModel() {
     private val viewModelJob = Job()
     private val coroutineScope = CoroutineScope(viewModelJob + Dispatchers.Main)
 
+    private var needLoadData = true
+
     init {
+        val connectivityManager = application.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            connectivityManager.registerDefaultNetworkCallback(object : ConnectivityManager.NetworkCallback() {
+                override fun onAvailable(network : Network) {
+                    Log.e(TAG, "The default network is now: " + network)
+
+                    if (needLoadData) {
+                        fetchHeroList(false)
+                    }
+
+                }
+
+                override fun onLost(network : Network) {
+                    Log.e(TAG, "The application no longer has a default network. The last default network was " + network)
+                }
+
+                override fun onCapabilitiesChanged(network : Network, networkCapabilities : NetworkCapabilities) {
+                    Log.e(TAG, "The default network changed capabilities: " + networkCapabilities)
+                }
+
+                override fun onLinkPropertiesChanged(network : Network, linkProperties : LinkProperties) {
+                    Log.e(TAG, "The default network changed link properties: " + linkProperties)
+                }
+            })
+        } else {
+            val networkRequest = NetworkRequest.Builder()
+                .addTransportType(NetworkCapabilities.TRANSPORT_CELLULAR)
+                .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
+                .build()
+
+
+                connectivityManager.registerNetworkCallback(networkRequest, object :
+                    ConnectivityManager.NetworkCallback() {
+                    override fun onAvailable(network: Network) {
+                        super.onAvailable(network)
+
+                        if (needLoadData) {
+                            fetchHeroList(false)
+                        }
+                    }
+                })
+
+        }
+
+
         fetchHeroList()
     }
 
-    fun fetchHeroList() {
+    fun fetchHeroList(needCheckInternet: Boolean = true) {
+        needLoadData = true
+
         if (status.value == HeroApiStatus.LOADING) {
             return
         }
+
+        if (needCheckInternet && !isNetworkAvailable(getApplication())) {
+            _status.value = HeroApiStatus.NO_INTERNET
+            return
+        }
+
 
         coroutineScope.launch {
             Log.d(TAG, "fetchHeroList: start")
@@ -65,6 +124,8 @@ class HeroListViewModel(): ViewModel() {
 
             } catch (t:Throwable) {
                 _status.value = HeroApiStatus.ERROR
+            } finally {
+                needLoadData = false
             }
         }
     }

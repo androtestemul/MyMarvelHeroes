@@ -3,17 +3,20 @@ package com.apska.mymarvelheroes.utils
 import android.app.Activity
 import android.content.Context
 import android.graphics.Insets
+import android.net.ConnectivityManager
+import android.net.Network
+import android.net.NetworkCapabilities
 import android.os.Build
 import android.util.DisplayMetrics
 import android.view.WindowInsets
 import android.widget.ImageView
-import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.net.toUri
 import com.apska.mymarvelheroes.R
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import java.math.BigInteger
 import java.security.MessageDigest
+
 
 class Common {
     companion object {
@@ -52,5 +55,9 @@ class Common {
                 )
                 .into(imageView)
         }
+
+
+
+
     }
 }

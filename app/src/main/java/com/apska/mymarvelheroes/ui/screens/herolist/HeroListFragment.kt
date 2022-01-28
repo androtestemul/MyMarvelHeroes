@@ -76,6 +76,12 @@ class HeroListFragment : Fragment() {
                         .setImageDrawable(AppCompatResources.getDrawable(requireActivity(), R.drawable.ic_baseline_error_24))
                     binding.statusBar.textViewLoading.text = getText(R.string.loading_error_try_again)
                 }
+                HeroApiStatus.NO_INTERNET -> {
+                    binding.statusBar.statusView.visibility = View.VISIBLE
+                    binding.statusBar.imageViewLoading
+                        .setImageDrawable(AppCompatResources.getDrawable(requireActivity(), R.drawable.ic_baseline_error_24))
+                    binding.statusBar.textViewLoading.text = getText(R.string.no_internet)
+                }
                 else -> {
                     binding.statusBar.statusView.visibility = View.GONE
                 }
