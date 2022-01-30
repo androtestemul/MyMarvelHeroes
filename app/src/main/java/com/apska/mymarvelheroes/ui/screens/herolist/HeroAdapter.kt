@@ -3,18 +3,13 @@ package com.apska.mymarvelheroes.ui.screens.herolist
 import android.annotation.SuppressLint
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import androidx.core.net.toUri
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.apska.mymarvelheroes.R
 import com.apska.mymarvelheroes.data.model.Hero
 import com.apska.mymarvelheroes.databinding.HeroViewItemBinding
 import com.apska.mymarvelheroes.utils.Common
-import com.bumptech.glide.Glide
-import com.bumptech.glide.request.RequestOptions
 
 class HeroAdapter : ListAdapter<Hero, HeroAdapter.HeroViewHolder>(DiffCallBack) {
 
@@ -38,11 +33,7 @@ class HeroAdapter : ListAdapter<Hero, HeroAdapter.HeroViewHolder>(DiffCallBack) 
     override fun onBindViewHolder(holder: HeroViewHolder, position: Int) {
         val hero = getItem(position)
 
-        holder.itemView.setOnClickListener(object : View.OnClickListener {
-            override fun onClick(view: View?) {
-                onItemClickListener.onClick(hero)
-            }
-        })
+        holder.itemView.setOnClickListener { onItemClickListener.onClick(hero) }
 
         holder.bind(hero)
 
