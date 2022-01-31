@@ -28,7 +28,7 @@ class HeroListViewModel(application: Application): AndroidViewModel(application)
     val heroes: LiveData<ArrayList<Hero>>
         get() = _heroes
 
-    var offset = 0L
+    private var offset = 0L
 
     private val _navigateToSelectedHero = MutableLiveData<Hero>()
     val navigateToSelectedHero: LiveData<Hero>
@@ -44,24 +44,9 @@ class HeroListViewModel(application: Application): AndroidViewModel(application)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             connectivityManager.registerDefaultNetworkCallback(object : ConnectivityManager.NetworkCallback() {
                 override fun onAvailable(network : Network) {
-                    Log.e(TAG, "The default network is now: " + network)
-
                     if (needLoadData) {
                         fetchHeroList(false)
                     }
-
-                }
-
-                override fun onLost(network : Network) {
-                    Log.e(TAG, "The application no longer has a default network. The last default network was " + network)
-                }
-
-                override fun onCapabilitiesChanged(network : Network, networkCapabilities : NetworkCapabilities) {
-                    Log.e(TAG, "The default network changed capabilities: " + networkCapabilities)
-                }
-
-                override fun onLinkPropertiesChanged(network : Network, linkProperties : LinkProperties) {
-                    Log.e(TAG, "The default network changed link properties: " + linkProperties)
                 }
             })
         } else {
