@@ -1,4 +1,4 @@
-package com.apska.mymarvelheroes.utils
+package com.apska.mymarvelheroes.utils.network
 
 import android.content.Context
 import android.net.ConnectivityManager

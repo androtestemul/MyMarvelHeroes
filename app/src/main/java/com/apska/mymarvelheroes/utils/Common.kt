@@ -1,11 +1,7 @@
 package com.apska.mymarvelheroes.utils
 
 import android.app.Activity
-import android.content.Context
 import android.graphics.Insets
-import android.net.ConnectivityManager
-import android.net.Network
-import android.net.NetworkCapabilities
 import android.os.Build
 import android.util.DisplayMetrics
 import android.view.WindowInsets
@@ -45,7 +41,7 @@ class Common {
         }
 
         fun loadImageToView(imageView: ImageView, imageUrl: String) {
-            val imgUri = imageUrl.toUri().buildUpon().scheme("https")?.build()
+            val imgUri = imageUrl.toUri().buildUpon().scheme("https").build()
             Glide.with(imageView.context)
                 .load(imgUri)
                 .apply(

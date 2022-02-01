@@ -1,9 +1,6 @@
 package com.apska.mymarvelheroes.ui.screens.herolist
 
 import android.app.Application
-import android.content.Context
-import android.net.*
-import android.os.Build
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
@@ -12,7 +9,9 @@ import com.apska.mymarvelheroes.BuildConfig
 import com.apska.mymarvelheroes.data.api.HeroApi
 import com.apska.mymarvelheroes.data.model.Hero
 import com.apska.mymarvelheroes.utils.Common.Companion.md5
-import com.apska.mymarvelheroes.utils.NetworkUtils.Companion.isNetworkAvailable
+import com.apska.mymarvelheroes.utils.network.NetworkChecker
+import com.apska.mymarvelheroes.utils.network.NetworkUtils.Companion.isNetworkAvailable
+import com.apska.mymarvelheroes.utils.network.OnRegisterNetworkCallback
 import kotlinx.coroutines.*
 import java.util.*
 
@@ -40,47 +39,31 @@ class HeroListViewModel(application: Application): AndroidViewModel(application)
     private var needLoadData = true
 
     init {
-        val connectivityManager = application.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            connectivityManager.registerDefaultNetworkCallback(object : ConnectivityManager.NetworkCallback() {
-                override fun onAvailable(network : Network) {
-                    if (needLoadData) {
-                        fetchHeroList(false)
+        NetworkChecker.registerNetworkCallBack(application, object : OnRegisterNetworkCallback {
+            override fun onAvailable() {
+                coroutineScope.launch {
+                    withContext(Dispatchers.Main) {
+                        fetchHeroList()
                     }
                 }
-            })
-        } else {
-            val networkRequest = NetworkRequest.Builder()
-                .addTransportType(NetworkCapabilities.TRANSPORT_CELLULAR)
-                .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
-                .build()
+            }
+        })
 
+        NetworkChecker.isNetworkConnected = isNetworkAvailable(application)
 
-                connectivityManager.registerNetworkCallback(networkRequest, object :
-                    ConnectivityManager.NetworkCallback() {
-                    override fun onAvailable(network: Network) {
-                        super.onAvailable(network)
-
-                        if (needLoadData) {
-                            fetchHeroList(false)
-                        }
-                    }
-                })
-
+        if (!NetworkChecker.isNetworkConnected) {
+            _status.value = HeroApiStatus.NO_INTERNET
         }
-
-
-        fetchHeroList()
     }
 
-    fun fetchHeroList(needCheckInternet: Boolean = true) {
+    fun fetchHeroList() {
         needLoadData = true
 
         if (status.value == HeroApiStatus.LOADING) {
             return
         }
 
-        if (needCheckInternet && !isNetworkAvailable(getApplication())) {
+        if (!NetworkChecker.isNetworkConnected) {
             _status.value = HeroApiStatus.NO_INTERNET
             return
         }
@@ -107,10 +90,10 @@ class HeroListViewModel(application: Application): AndroidViewModel(application)
 
                 _heroes.value = heroList
 
+                needLoadData = false
+
             } catch (t:Throwable) {
                 _status.value = HeroApiStatus.ERROR
-            } finally {
-                needLoadData = false
             }
         }
     }
