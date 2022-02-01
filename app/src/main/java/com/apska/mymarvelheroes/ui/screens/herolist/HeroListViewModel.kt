@@ -49,7 +49,7 @@ class HeroListViewModel(application: Application): AndroidViewModel(application)
             }
         })
 
-        NetworkChecker.isNetworkConnected = isNetworkAvailable(application)
+        //NetworkChecker.isNetworkConnected = isNetworkAvailable(application)
 
         if (!NetworkChecker.isNetworkConnected) {
             _status.value = HeroApiStatus.NO_INTERNET
