@@ -9,3 +9,14 @@ data class HeroResponse (
     val etag            : String? = null,
     val data            : HeroListData
 )
+
+fun HeroResponse.asDomainModel(): List<DatabaseHero> {
+    return data.results.map {
+        DatabaseHero(
+            it.id,
+            it.name,
+            it.description,
+            it.thumbnail.imageUrl
+        )
+    }
+}

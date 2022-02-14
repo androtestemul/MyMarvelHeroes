@@ -8,9 +8,9 @@ import androidx.lifecycle.MutableLiveData
 import com.apska.mymarvelheroes.BuildConfig
 import com.apska.mymarvelheroes.data.api.HeroApi
 import com.apska.mymarvelheroes.data.model.Hero
+import com.apska.mymarvelheroes.data.model.asDomainModel
 import com.apska.mymarvelheroes.utils.Common.Companion.md5
 import com.apska.mymarvelheroes.utils.network.NetworkChecker
-import com.apska.mymarvelheroes.utils.network.NetworkUtils.Companion.isNetworkAvailable
 import com.apska.mymarvelheroes.utils.network.OnRegisterNetworkCallback
 import kotlinx.coroutines.*
 import java.util.*
@@ -49,8 +49,6 @@ class HeroListViewModel(application: Application): AndroidViewModel(application)
             }
         })
 
-        //NetworkChecker.isNetworkConnected = isNetworkAvailable(application)
-
         if (!NetworkChecker.isNetworkConnected) {
             _status.value = HeroApiStatus.NO_INTERNET
         }
@@ -86,7 +84,7 @@ class HeroListViewModel(application: Application): AndroidViewModel(application)
 
                 val heroList = _heroes.value ?: ArrayList()
 
-                heroList.addAll(heroResponse.data.results)
+                //heroList.addAll(heroResponse.asDomainModel())
 
                 _heroes.value = heroList
 

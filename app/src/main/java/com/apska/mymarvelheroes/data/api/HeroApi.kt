@@ -1,7 +1,5 @@
 package com.apska.mymarvelheroes.data.api
 
-import android.app.Application
-import com.apska.mymarvelheroes.data.api.HeroApiService
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor

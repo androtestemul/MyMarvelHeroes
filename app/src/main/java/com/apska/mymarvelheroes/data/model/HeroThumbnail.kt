@@ -1,13 +1,11 @@
 package com.apska.mymarvelheroes.data.model
 
 import android.os.Parcelable
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class HeroThumbnail(
     val path      : String,
-    val extension : String
-) : Parcelable {
-    val imageUrl: String
-        get() = path + "." + extension
-}
+    val extension : String,
+    val imageUrl: String = "$path.$extension"
+) : Parcelable
